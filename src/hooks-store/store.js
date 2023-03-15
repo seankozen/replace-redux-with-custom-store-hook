@@ -8,6 +8,8 @@ let actions = {};
 export const useStore = () => {
     const setState = useState(globalState)[1];
 
+    //When dispatch is called, global state is updated
+    //Listeners called, which are just set state calls, causing a rerender
     const dispatch = (actionIdentifier, payload) => {
         const newState = actions[actionIdentifier](globalState, payload)
         globalState = {...globalState, ...newState};
@@ -17,8 +19,8 @@ export const useStore = () => {
         }
     };
 
-    listeners.push(setState);
-
+    
+    //Register one listener per component
     useEffect(() => {
         listeners.push(setState);
     
@@ -35,6 +37,7 @@ export const useStore = () => {
     return [globalState, dispatch];
 }
 
+//Initializes store
 export const initStore = (userActions, initialState) => {
     if (initialState) {
         globalState = {...globalState, ...initialState};
